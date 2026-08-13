@@ -27,6 +27,9 @@ class Account:
         self._budgets: dict[str, Decimal | None] = {
             category: None for category in CATEGORIES
         }
+        self._spent: dict[str, Decimal] = {
+            category: Decimal("0") for category in CATEGORIES
+        }
         self._history: list[TransactionRecord] = []
 
     @property
@@ -52,8 +55,11 @@ class Account:
         if value > self._balance:
             raise InsufficientBalanceError(value, self._balance)
         budget = self._budgets[category]
-        if budget is not None and value > budget:
-            raise BudgetExceededError(category, budget, value)
+        if budget is not None:
+            remaining = budget - self._spent[category]
+            if value > remaining:
+                raise BudgetExceededError(category, budget, value)
+            self._spent[category] += value
         self._balance -= value
         self._history.append(("expense", value, category))
 
@@ -61,6 +67,15 @@ class Account:
         """Set the spending limit for a category."""
         self._validate_category(category)
         self._budgets[category] = self._validate_amount(amount)
+        self._spent[category] = Decimal("0")
+
+    def remaining_budget(self, category: str) -> Decimal | None:
+        """Return the amount left to spend in a category, or None if unlimited."""
+        self._validate_category(category)
+        budget = self._budgets[category]
+        if budget is None:
+            return None
+        return budget - self._spent[category]
 
     def _validate_amount(self, amount: Money) -> Decimal:
         value = Decimal(amount)
