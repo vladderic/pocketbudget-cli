@@ -22,6 +22,11 @@ def save_account(account: Account, path: Path = DEFAULT_DATA_PATH) -> None:
     payload = {
         "currency": "$",
         "history": [_record_to_dict(record) for record in account.history],
+        "budgets": {
+            category: str(budget)
+            for category, budget in account.budgets.items()
+            if budget is not None
+        },
     }
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload))
@@ -58,12 +63,23 @@ def _account_from_payload(payload: object) -> Account:
     if not isinstance(currency, str):
         raise CorruptFileError("Save file has an invalid currency.")
     account = Account(currency=currency)
+    _restore_budgets(account, payload.get("budgets", {}))
     history = payload.get("history", [])
     if not isinstance(history, list):
         raise CorruptFileError("Save file has an invalid history.")
     for entry in history:
         _apply_entry(account, entry)
     return account
+
+
+def _restore_budgets(account: Account, budgets: object) -> None:
+    if not isinstance(budgets, dict):
+        raise CorruptFileError("Save file has invalid budgets.")
+    for category, amount in budgets.items():
+        if isinstance(category, str) and isinstance(amount, (str, int)):
+            account.set_budget(category, amount)
+            continue
+        raise CorruptFileError("Save file has a malformed budget.")
 
 
 def _apply_entry(account: Account, entry: object) -> None:

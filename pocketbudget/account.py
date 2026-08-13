@@ -42,6 +42,11 @@ class Account:
         """Defensive copy of the transaction history."""
         return list(self._history)
 
+    @property
+    def budgets(self) -> dict[str, Decimal | None]:
+        """Defensive copy of the category budgets (None means unlimited)."""
+        return dict(self._budgets)
+
     def add_income(self, amount: Money) -> None:
         """Record an income transaction and update the balance."""
         value = self._validate_amount(amount)
