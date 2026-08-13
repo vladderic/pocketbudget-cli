@@ -83,7 +83,10 @@ class Account:
         return budget - self._spent[category]
 
     def _validate_amount(self, amount: Money) -> Decimal:
-        value = Decimal(amount)
+        try:
+            value = Decimal(amount)
+        except (TypeError, ValueError, ArithmeticError) as exc:
+            raise InvalidAmountError(amount) from exc
         if value <= Decimal("0"):
             raise InvalidAmountError(value)
         return value

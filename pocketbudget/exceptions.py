@@ -8,10 +8,10 @@ class PocketBudgetError(Exception):
 
 
 class InvalidAmountError(PocketBudgetError):
-    """Raised when a transaction amount is not positive."""
+    """Raised when a transaction amount is not a positive number."""
 
-    def __init__(self, amount: Decimal) -> None:
-        super().__init__(f"Amount must be positive, got {amount}.")
+    def __init__(self, amount: object) -> None:
+        super().__init__(f"Amount must be a positive number, got {amount!r}.")
 
 
 class InvalidCategoryError(PocketBudgetError):
