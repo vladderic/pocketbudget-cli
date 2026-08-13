@@ -10,7 +10,7 @@ There are no wrong answers, but there are inconsistent ones. Once you decide a r
 
 *What currency does your application use, and how is money formatted when it's displayed?*
 
-> _Your answer:_
+> $
 
 ---
 
@@ -18,7 +18,7 @@ There are no wrong answers, but there are inconsistent ones. Once you decide a r
 
 *Which expense categories are allowed? Limit yourself to 3–5. What happens if someone uses a category that isn't on your list?*
 
-> _Your answer:_
+> Only Food and Transport should be allowed. Any other category should give an error.
 
 ---
 
@@ -26,7 +26,7 @@ There are no wrong answers, but there are inconsistent ones. Once you decide a r
 
 *What happens when an expense is larger than the total balance? Does your app allow the balance to go negative, or does it block the transaction? If it blocks, what does the caller get back?*
 
-> _Your answer:_
+> Block and give an error message
 
 ---
 
@@ -34,7 +34,7 @@ There are no wrong answers, but there are inconsistent ones. Once you decide a r
 
 *What happens when an expense exceeds a category's budget limit, but the balance could still cover it? Is it blocked, or is it recorded with a warning?*
 
-> _Your answer:_
+> Transaction is blocked and error message is displayed.
 
 ---
 
@@ -42,7 +42,7 @@ There are no wrong answers, but there are inconsistent ones. Once you decide a r
 
 Now turn each rule above into the test you will write **before** the implementation exists. Name the behaviour you'd assert.
 
-- [ ] Rule 1 (Currency) →
-- [ ] Rule 2 (Categories) →
-- [ ] Rule 3 (Overspending) →
-- [ ] Rule 4 (Budget Limits) →
+- [ ] Rule 1 (Currency) → Only dollar currency should be allowed. Any other currency should result in error message.
+- [ ] Rule 2 (Categories) → Only categories Food and Transport should be possible. Error message should be displayed in case of other category.
+- [ ] Rule 3 (Overspending) → Display error message in case of overspending
+- [ ] Rule 4 (Budget Limits) → Block transaction and error message is displayed
