@@ -11,6 +11,7 @@ from pocketbudget.exceptions import (
 )
 
 Money = Decimal | int | str
+TransactionRecord = tuple[str, Decimal] | tuple[str, Decimal, str]
 
 CURRENCY = "$"
 CATEGORIES: tuple[str, ...] = ("Food", "Transport")
@@ -26,16 +27,23 @@ class Account:
         self._budgets: dict[str, Decimal | None] = {
             category: None for category in CATEGORIES
         }
+        self._history: list[TransactionRecord] = []
 
     @property
     def balance(self) -> Decimal:
         """Read-only view of the current balance."""
         return self._balance
 
+    @property
+    def history(self) -> list[TransactionRecord]:
+        """Defensive copy of the transaction history."""
+        return list(self._history)
+
     def add_income(self, amount: Money) -> None:
         """Record an income transaction and update the balance."""
         value = self._validate_amount(amount)
         self._balance += value
+        self._history.append(("income", value))
 
     def add_expense(self, amount: Money, category: str) -> None:
         """Record an expense transaction and update the balance."""
@@ -47,6 +55,7 @@ class Account:
         if budget is not None and value > budget:
             raise BudgetExceededError(category, budget, value)
         self._balance -= value
+        self._history.append(("expense", value, category))
 
     def set_budget(self, category: str, amount: Money) -> None:
         """Set the spending limit for a category."""
